@@ -14,6 +14,17 @@ KEYS = [
 ROW_PINS = [4, 17, 27, 22] # Yellow, Blue, Gray, White
 COL_PINS = [5, 6, 13] # Green, Purple, Black
 
+GREEN_LED = 25
+RED_LED = 21
+BUZZER = 20
+GPIO.setup(GREEN_LED, GPIO.OUT)
+GPIO.setup(RED_LED, GPIO.OUT)
+GPIO.setup(BUZZER, GPIO.OUT)
+
+
+
+
+
 # Setup keypad pins
 for row in ROW_PINS:
     GPIO.setup(row, GPIO.OUT)
@@ -34,6 +45,16 @@ def unlock_servo():
     pwm.ChangeDutyCycle(2.5) # ~0°
     time.sleep(0.5)
 
+def light_led(pin):
+    GPIO.output(pin, GPIO.HIGH)
+    time.sleep(2)
+    GPIO.output(pin, GPIO.LOW)
+
+def buzzer_beep(buzz):
+    GPIO.output(buzz, GPIO.HIGH)
+    time.sleep(0.2)
+    GPIO.output(buzz, GPIO.LOW)
+
 def get_key():
     for i, row in enumerate(ROW_PINS):
         GPIO.output(row, GPIO.HIGH)
@@ -43,6 +64,14 @@ def get_key():
                 return KEYS[i][j]
         GPIO.output(row, GPIO.LOW)
     return None
+
+
+def clean_and_exit():
+    pwm.stop()
+    GPIO.cleanup()
+    print("Servo exited flawlessly.")
+    exit()
+
 
 CORRECT_CODE = "1234"
 code = ""
@@ -61,9 +90,13 @@ try:
                     break
                 elif code == CORRECT_CODE:
                     print("✅ Correct! Unlocking...")
+                    light_led(GREEN_LED)
                     unlock_servo()
+                    clean_and_exit()
                 else:
                     print("❌ Wrong code.")
+                    light_led(RED_LED)
+                    buzzer_beep(BUZZER)
                 code = ""
             elif key == '*':
                 print("Code cleared")
