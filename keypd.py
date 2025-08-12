@@ -89,12 +89,12 @@ try:
                     print("Exit code entered. Stopping...")
                     break
                 elif code == CORRECT_CODE:
-                    print("✅ Correct! Unlocking...")
+                    print("Correct! Unlocking...")
                     light_led(GREEN_LED)
                     unlock_servo()
                     clean_and_exit()
                 else:
-                    print("❌ Wrong code.")
+                    print("Wrong code.")
                     light_led(RED_LED)
                     buzzer_beep(BUZZER)
                 code = ""
